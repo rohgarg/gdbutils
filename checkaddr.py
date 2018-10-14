@@ -64,7 +64,7 @@ class CheckAddress(gdb.Command):
         # type: (int) -> void
         """Prints the proc maps of the current process"""
         for ent in self.proc_map:
-            print(ent)
+            print(str(ent))
 
     def get_symbol_addr(self, symname):
         # type: (str) -> (str, str)
@@ -72,7 +72,7 @@ class CheckAddress(gdb.Command):
         (sym, found) = gdb.lookup_symbol(symname)
         if sym is None or sym.type is None:
             val = gdb.parse_and_eval(symname)
-            return (symname, str(val))
+            return (str(symname), str(val))
         if sym.type.code in (gdb.TYPE_CODE_STRUCT,
                              gdb.TYPE_CODE_INT,
                              gdb.TYPE_CODE_FLT,
@@ -83,7 +83,7 @@ class CheckAddress(gdb.Command):
         if sym.type.code == gdb.TYPE_CODE_FUNC:
             long_int_t = gdb.Value(1).type
             return ("&{0:s}".format(symname), str(sym.value().cast(long_int_t)))
-        return (symname, str(0))
+        return (str(symname), str(0))
 
     def invoke(self, arg, from_tty):
         """Invoked when the command is executed from GDB"""
@@ -92,7 +92,7 @@ class CheckAddress(gdb.Command):
             return
         self.read_procmaps(cur_proc.pid)
         args = gdb.string_to_argv(arg)
-        if len(args) == 0 and from_tty == 0:
+        if len(args) == 0 and from_tty:
             self.print_procmaps()
             return
         for a in args:
@@ -104,6 +104,6 @@ class CheckAddress(gdb.Command):
                 (s1, s2) = self.get_symbol_addr(a)
                 addr = int(s2, 0)
                 print("{0:s}:".format(s1)),
-            print("{0:x}: {1:s}".format(addr, self.find_containing_procentry(addr)))
+            print("{0:x}: {1:s}".format(addr, str(self.find_containing_procentry(addr))))
 
 CheckAddress()
