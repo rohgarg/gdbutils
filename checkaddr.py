@@ -36,6 +36,11 @@ class ProcMapsStruct():
         """Returns true if the given address is within this proc-map entry"""
         return addr >= self.start and addr < self.end
 
+    def offset(self, addr):
+        # type: (int) -> int
+        """Returns offset of addr from beginning of proc-map region"""
+        return addr - self.start
+
 class CheckAddress(gdb.Command):
     """Print where the given addresses are in the proc maps of the current process
     Usage: whereis [addr1] [addr2] [addr3] ...
@@ -104,6 +109,7 @@ class CheckAddress(gdb.Command):
                 (s1, s2) = self.get_symbol_addr(a)
                 addr = int(s2, 0)
                 print("{0:s}:".format(s1)),
-            print("{0:x}: {1:s}".format(addr, str(self.find_containing_procentry(addr))))
+            entry = self.find_containing_procentry(addr)
+            print("0x{0:x}, Offset: 0x{1:x}:\n{2:s}".format(addr, entry.offset(addr), str(entry)))
 
 CheckAddress()
