@@ -110,6 +110,9 @@ class CheckAddress(gdb.Command):
                 addr = int(s2, 0)
                 print("{0:s}:".format(s1)),
             entry = self.find_containing_procentry(addr)
-            print("0x{0:x}, Offset: 0x{1:x}:\n{2:s}".format(addr, entry.offset(addr), str(entry)))
+            if  entry != None:
+              print("0x{0:x}, Offset: 0x{1:x}:\n{2:s}".format(addr, entry.offset(addr), str(entry)))
+            else:
+              print("0x{0:x}, Offset: None:\n{1:s}".format(addr, str(entry)))
 
 CheckAddress()
